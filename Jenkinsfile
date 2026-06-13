@@ -19,10 +19,11 @@ pipeline {
                 sh '''
                     docker build -t ${DOCKER_USER}/sentiment-api:unstable .
                     docker rm -f sentiment-test-run || true
-                    docker run -d --name sentiment-test-run -p 5000:5000 \
+                    docker run -d --name sentiment-test-run \
+                        --network host \
                         -v /tmp/app-logs:/app/logs \
                         ${DOCKER_USER}/sentiment-api:unstable
-                    sleep 20
+                    sleep 60
                 '''
             }
         }
