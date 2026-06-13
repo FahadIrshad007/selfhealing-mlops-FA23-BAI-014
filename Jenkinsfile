@@ -86,6 +86,9 @@ pipeline {
                     kubectl apply -f k8s/blue-deployment.yaml
                     kubectl apply -f k8s/green-deployment.yaml
                     kubectl apply -f k8s/service.yaml
+                    kubectl patch service sentiment-api-service \
+                        --type=json \
+                        -p='[{"op":"replace","path":"/spec/selector/slot","value":"blue"}]'
                     kubectl rollout status deployment/sentiment-blue-deployment --timeout=300s
                     kubectl rollout status deployment/sentiment-green-deployment --timeout=300s
                 '''
