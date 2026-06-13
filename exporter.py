@@ -17,7 +17,12 @@ def fetch_confidence():
 if __name__ == "__main__":
     start_http_server(8000)
     print("Exporter running on port 8000")
+    readings = []
     while True:
         conf = fetch_confidence()
-        CONFIDENCE_GAUGE.set(conf)
+        readings.append(conf)
+        if len(readings) > 5:
+            readings.pop(0)
+        avg = sum(readings) / len(readings)
+        CONFIDENCE_GAUGE.set(avg)
         time.sleep(5)
