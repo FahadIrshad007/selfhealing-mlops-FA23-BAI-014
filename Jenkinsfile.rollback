@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    environment {
+        KUBECONFIG = '/var/lib/jenkins/.kube/config'
+    }
+
+    stages {
+        stage('Switch Traffic to Stable (Green)') {
+            steps {
+                sh '''
+                    export KUBECONFIG=/var/lib/jenkins/.kube/config
+                    kubectl patch service sentiment-api-service \
+                        -p '{"spec":{"selector":{"app":"sentiment-api","slot":"green"}}}'
+                    echo "Traffic switched to stable green deployment"
+                    kubectl get service sentiment-api-service -o yaml | grep slot
+                '''
+            }
+        }
+    }
+}
