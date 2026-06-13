@@ -44,16 +44,18 @@ pipeline {
 
         stage('UI Test') {
             steps {
-                sh '''
-                    docker run --rm \
-                        --network host \
-                        -v ${WORKSPACE}/tests:/tests \
-                        -w /tests \
-                        selenium/standalone-chrome:latest bash -c "
-                            pip install selenium pytest requests -q &&
-                            pytest test_ui.py -v --tb=short
-                        " || true
-                '''
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    sh '''
+                        docker run --rm \
+                            --network host \
+                            -v ${WORKSPACE}/tests:/tests \
+                            -w /tests \
+                            selenium/standalone-chrome:latest bash -c "
+                                pip install selenium pytest requests -q &&
+                                pytest test_ui.py -v --tb=short
+                            "
+                    '''
+                }
             }
         }
 
@@ -62,11 +64,9 @@ pipeline {
                 sh '''
                     echo ${DOCKERHUB_CREDS_PSW} | docker login -u ${DOCKERHUB_CREDS_USR} --password-stdin
 
-                    # Build and push unstable image
                     docker build -t ${DOCKER_USER}/sentiment-api:unstable .
                     docker push ${DOCKER_USER}/sentiment-api:unstable
 
-                    # Build stable image from stable-fallback branch
                     git clone -b stable-fallback https://github.com/FahadIrshad007/selfhealing-mlops-FA23-BAI-014.git stable-build || true
                     if [ -d stable-build ]; then
                         docker build -t ${DOCKER_USER}/sentiment-api:stable stable-build/
