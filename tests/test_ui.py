@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
-BASE_URL = "http://13.63.41.103:32500"
+BASE_URL = "http://localhost:5000"
 
 def test_frontend_sentiment():
     options = Options()
@@ -21,12 +21,12 @@ def test_frontend_sentiment():
         wait = WebDriverWait(driver, 15)
 
         text_input = wait.until(EC.presence_of_element_located((By.ID, "text-input")))
-        text_input.send_keys("This app is incredibly intuitive and has made my daily workflow dramatically more efficient")
+        text_input.send_keys("This app is incredibly intuitive")
 
         submit_btn = driver.find_element(By.ID, "submit-btn")
         submit_btn.click()
 
-        time.sleep(5)
+        time.sleep(2)
 
         result_output = driver.find_element(By.ID, "result-output")
         result_text = result_output.text
