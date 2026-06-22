@@ -13,7 +13,3 @@ receivers:
     webhook_configs:
       - url: 'http://16.192.5.17:8080/generic-webhook-trigger/invoke?token=ROLLBACK_5C6721_TOKEN'
         send_resolved: false
-        http_config:
-          basic_auth:
-            username: 'admin'
-            password: '119273d550f07678fe08c79f282461127d'
